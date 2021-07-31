@@ -1,0 +1,50 @@
+html, body, main{
+    margin: 0;
+    height: 100%;
+}
+
+#sidebar-admin{
+    width: 20%;
+    height: 100%;
+    float: left;
+    position: fixed;
+}
+
+#img-icon{
+    width: 40px;
+    height: 32px;
+    src:local("#");
+}
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+@media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+    }
+}
+
+#all-products, #content{
+    width: 80%;
+    float: right;
+}
+
+.produto{
+    width: 100%;
+    height: 225px;
+}
+
+.nav-options{
+    padding: 0.5em 0;
+    margin: 1%;
+}
+
+.m-nav-link, .m-nav-link:hover{
+    text-decoration: none;
+    color: black;
+}
