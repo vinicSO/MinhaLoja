@@ -1,13 +1,17 @@
 package br.com.minhaloja.resources;
 
+import br.com.minhaloja.domain.AjaxResponseBody;
 import br.com.minhaloja.domain.Categoria;
 import br.com.minhaloja.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/categorias")
@@ -21,5 +25,13 @@ public class CategoriaResource {
         Categoria obj = categoriaService.find(id);
 
         return ResponseEntity.ok().body(obj);
+    }
+
+    @RequestMapping(value= "/list", method = RequestMethod.GET)
+    public ResponseEntity<AjaxResponseBody> findAll() {
+        AjaxResponseBody result = new AjaxResponseBody();
+        List<Categoria> list = categoriaService.findAll();
+        result.setResult(list);
+        return ResponseEntity.ok().body(result);
     }
 }
