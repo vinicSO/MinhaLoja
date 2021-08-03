@@ -1,9 +1,8 @@
 package br.com.minhaloja;
 
-import br.com.minhaloja.domain.Categoria;
-import br.com.minhaloja.domain.Produto;
-import br.com.minhaloja.repositories.CategoriaRepository;
-import br.com.minhaloja.repositories.ProdutoRepository;
+import br.com.minhaloja.domain.*;
+import br.com.minhaloja.enums.TipoCliente;
+import br.com.minhaloja.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +23,15 @@ public class MinhaLojaApplication implements CommandLineRunner {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
+
+	@Autowired
+	private EstadoRepository estadoRepository;
+
+	@Autowired
+	private CidadeRepository cidadeRepository;
+
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MinhaLojaApplication.class, args);
@@ -83,5 +92,45 @@ public class MinhaLojaApplication implements CommandLineRunner {
 
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8));
 		produtoRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11));
+
+		// Estados
+
+		Estado est1 = new Estado(null, "Minas Gerais");
+		Estado est2 = new Estado(null, "São Paulo");
+
+		// Cidades
+
+		Cidade c1 = new Cidade(null, "Uberlândia", est1);
+		Cidade c2 = new Cidade(null, "São Paulo", est2);
+		Cidade c3 = new Cidade(null, "Campinas", est2);
+
+		// Relacionamento ESTADO_CIDADE
+
+		est1.getCidades().addAll(Arrays.asList(c1));
+		est2.getCidades().addAll(Arrays.asList(c2, c3));
+
+		// Salvando no BD
+
+		estadoRepository.saveAll(Arrays.asList(est1, est2));
+		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
+
+		// Clientes
+
+		Cliente cli1 = new Cliente(null, "Maria Silva", "viniciusuptelecom@gmail.com", "12345678900", TipoCliente.PESSOAFISICA);
+
+		Cliente cli2 = new Cliente(null, "Ana Costa", "vinicius.santos.oliv3ira@gmail.com", "12345678901", TipoCliente.PESSOAFISICA);
+
+		// Relacionamento CLIENTE_TELEFONE
+
+		cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+		cli2.getTelefones().addAll(Arrays.asList("27366323", "93838355"));
+
+		// Endereços
+
+		// Relacionamento CLIENTE_ENDERECOS
+
+		// Salvando no BD
+
+		clienteRepository.saveAll(Arrays.asList(cli1, cli2));
 	}
 }
