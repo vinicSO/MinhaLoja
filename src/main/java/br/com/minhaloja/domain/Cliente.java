@@ -1,11 +1,12 @@
 package br.com.minhaloja.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import br.com.minhaloja.enums.TipoCliente;
+
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Cliente implements Serializable {
@@ -17,6 +18,11 @@ public class Cliente implements Serializable {
     private String nome;
     private String email;
     private String cpfOuCnpj;
+    private Integer tipo;
+
+    @ElementCollection
+    @CollectionTable(name = "TELEFONE")
+    private Set<String> telefones = new HashSet<>();
 
     public Cliente() {
     }
@@ -26,6 +32,14 @@ public class Cliente implements Serializable {
         this.nome = nome;
         this.email = email;
         this.cpfOuCnpj = cpfOuCnpj;
+    }
+
+    public TipoCliente getTipo() {
+        return TipoCliente.toEnum(tipo);
+    }
+
+    public void setTipo(TipoCliente tipo) {
+        this.tipo = tipo.getCod();
     }
 
     public Integer getId() {
