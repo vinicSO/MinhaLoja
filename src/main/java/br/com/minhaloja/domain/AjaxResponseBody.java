@@ -3,11 +3,20 @@ package br.com.minhaloja.domain;
 import java.io.Serializable;
 import java.util.List;
 
-public class AjaxResponseBody implements Serializable {
+public class AjaxResponseBody<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    String msg;
-    List<?> result;
+    private String msg;
+    private List<T> result;
+    private T obj;
+
+    public T getObj() {
+        return obj;
+    }
+
+    public void setObj(T obj) {
+        this.obj = obj;
+    }
 
     public String getMsg() {
         return msg;
@@ -17,11 +26,11 @@ public class AjaxResponseBody implements Serializable {
         this.msg = msg;
     }
 
-    public List<?> getResult() {
+    public List<T> getResult() {
         return result;
     }
 
-    public void setResult(List<?> result) {
+    public void setResult(List<T> result) {
         this.result = result;
     }
 }
