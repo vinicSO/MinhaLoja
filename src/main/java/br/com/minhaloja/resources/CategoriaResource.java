@@ -29,7 +29,7 @@ public class CategoriaResource {
 
     @RequestMapping(value= "/list", method = RequestMethod.GET)
     public ResponseEntity<AjaxResponseBody> findAll() {
-        AjaxResponseBody result = new AjaxResponseBody();
+        AjaxResponseBody<Categoria> result = new AjaxResponseBody();
         List<Categoria> list = categoriaService.findAll();
         result.setResult(list);
         return ResponseEntity.ok().body(result);

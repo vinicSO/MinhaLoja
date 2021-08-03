@@ -1,7 +1,10 @@
 package br.com.minhaloja.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -13,17 +16,18 @@ public class Estado implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Date instante;
+    private String nome;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "estado")
-    private List<Cidade> cidades;
+    private List<Cidade> cidades = new ArrayList<>();
 
     public Estado() {
     }
 
-    public Estado(Integer id, Date instante) {
+    public Estado(Integer id, String nome) {
         this.id = id;
-        this.instante = instante;
+        this.nome = nome;
     }
 
     public Integer getId() {
@@ -34,12 +38,12 @@ public class Estado implements Serializable {
         this.id = id;
     }
 
-    public Date getInstante() {
-        return instante;
+    public String getNome() {
+        return nome;
     }
 
-    public void setInstante(Date instante) {
-        this.instante = instante;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public List<Cidade> getCidades() {
