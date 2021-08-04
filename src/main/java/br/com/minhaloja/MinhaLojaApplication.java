@@ -1,19 +1,16 @@
 package br.com.minhaloja;
 
 import br.com.minhaloja.domain.*;
+import br.com.minhaloja.enums.EstadoPagamento;
 import br.com.minhaloja.enums.TipoCliente;
 import br.com.minhaloja.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @SpringBootApplication
 public class MinhaLojaApplication implements CommandLineRunner {
@@ -32,6 +29,18 @@ public class MinhaLojaApplication implements CommandLineRunner {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
+
+	@Autowired
+	private PedidoRepository pedidoRepository;
+
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MinhaLojaApplication.class, args);
@@ -126,11 +135,66 @@ public class MinhaLojaApplication implements CommandLineRunner {
 		cli2.getTelefones().addAll(Arrays.asList("27366323", "93838355"));
 
 		// Endereços
+		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+		Endereco e3 = new Endereco(null, "Avenida Liberdade", "801", "Casa branca", "Bairro Novo", "58275000", cli2, c2);
 
 		// Relacionamento CLIENTE_ENDERECOS
+
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 
 		// Salvando no BD
 
 		clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2, e3));
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+		// Pedidos
+
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), /*pagamento, */ cli1, e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), /*pagamento, */ cli1, e2);
+
+		// Pagamentos
+
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+
+
+		// Relacionamento PEDIDO_PAGAMENTO
+
+		ped1.setPagamento(pagto1);
+		ped2.setPagamento(pagto2);
+
+		// Relacionamento CLIENTE_PEDIDOS
+
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+
+		// Salvando no BD
+
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
+
+		// Itens de Pedidos
+
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+
+		// Relacionamento PEDIDO_ITENS
+
+		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+
+		// Relacionamento PRODUTO_ITENS
+
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip2));
+
+		/* Salvando no BD */
+
+		itemPedidoRepository.saveAll(Arrays.asList(ip1, ip2, ip3));
 	}
 }
