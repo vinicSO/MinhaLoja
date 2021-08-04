@@ -21,7 +21,7 @@ public class CategoriaResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<AjaxResponseBody> find(@PathVariable Integer id) {
-        AjaxResponseBody<Categoria> result = new AjaxResponseBody<>();
+        AjaxResponseBody<Categoria> result = new AjaxResponseBody<Categoria>();
         Categoria obj = categoriaService.find(id);
         result.setObj(obj);
         return ResponseEntity.ok().body(result);
@@ -29,7 +29,7 @@ public class CategoriaResource {
 
     @RequestMapping(value= "/list", method = RequestMethod.GET)
     public ResponseEntity<AjaxResponseBody> findAll() {
-        AjaxResponseBody<Categoria> result = new AjaxResponseBody();
+        AjaxResponseBody<Categoria> result = new AjaxResponseBody<Categoria>();
         List<Categoria> list = categoriaService.findAll();
         result.setResult(list);
         return ResponseEntity.ok().body(result);
@@ -40,5 +40,14 @@ public class CategoriaResource {
         obj = categoriaService.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<AjaxResponseBody> update(@RequestBody Categoria obj, @PathVariable Integer id) {
+        AjaxResponseBody<Categoria> result = new AjaxResponseBody<Categoria>();
+        obj.setId(id);
+        obj = categoriaService.update(obj);
+        result.setObj(obj);
+        return ResponseEntity.ok().body(result);
     }
 }
