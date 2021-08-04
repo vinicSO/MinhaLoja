@@ -2,6 +2,7 @@ package br.com.minhaloja.resources;
 
 import br.com.minhaloja.domain.AjaxResponseBody;
 import br.com.minhaloja.domain.Categoria;
+import br.com.minhaloja.dto.CategoriaDTO;
 import br.com.minhaloja.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,10 @@ public class CategoriaResource {
 
     @RequestMapping(value= "/list", method = RequestMethod.GET)
     public ResponseEntity<AjaxResponseBody> findAll() {
-        AjaxResponseBody<Categoria> result = new AjaxResponseBody<Categoria>();
+        AjaxResponseBody<CategoriaDTO> result = new AjaxResponseBody<CategoriaDTO>();
         List<Categoria> list = categoriaService.findAll();
-        result.setResult(list);
+        List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+        result.setResult(listDto);
         return ResponseEntity.ok().body(result);
     }
 

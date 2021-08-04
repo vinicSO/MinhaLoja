@@ -7,7 +7,7 @@ $(document).ready( function() {
 })
 
 function getCategorias() {
-    let url = "http://localhost:8080/categorias/list"
+    let url = "/categorias/list"
     $.ajax({method: "GET", url})
         .done(function(response) {
             
@@ -51,7 +51,7 @@ function listarCategorias(list) {
             `<li class='list-group-item d-flex justify-content-between align-items-center'>
                 <div>
                     <span>${element.nome}</span>
-                    <span class="badge bg-primary rounded-pill">${element.produtos.length}</span>
+                    <span class="badge bg-primary rounded-pill">${element.quantidadeProdutosRelacionados}</span>
                 </div>
 
                 <span>
