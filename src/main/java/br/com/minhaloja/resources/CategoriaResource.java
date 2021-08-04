@@ -5,11 +5,10 @@ import br.com.minhaloja.domain.Categoria;
 import br.com.minhaloja.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,10 +20,11 @@ public class CategoriaResource {
     CategoriaService categoriaService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Categoria> find(@PathVariable Integer id) {
+    public ResponseEntity<AjaxResponseBody> find(@PathVariable Integer id) {
+        AjaxResponseBody<Categoria> result = new AjaxResponseBody<>();
         Categoria obj = categoriaService.find(id);
-
-        return ResponseEntity.ok().body(obj);
+        result.setObj(obj);
+        return ResponseEntity.ok().body(result);
     }
 
     @RequestMapping(value= "/list", method = RequestMethod.GET)
@@ -33,5 +33,12 @@ public class CategoriaResource {
         List<Categoria> list = categoriaService.findAll();
         result.setResult(list);
         return ResponseEntity.ok().body(result);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> insert(@RequestBody Categoria obj) {
+        obj = categoriaService.insert(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 }
