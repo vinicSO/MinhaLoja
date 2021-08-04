@@ -1,9 +1,12 @@
 package br.com.minhaloja.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Entity
 public class Pedido implements Serializable {
@@ -13,7 +16,7 @@ public class Pedido implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "dd/MM/yyy HH:mm")
     private Date instante;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "pedido")
@@ -24,15 +27,29 @@ public class Pedido implements Serializable {
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "endereco_id")
+    @JoinColumn(name = "endereco_de_entrega_id")
     private Endereco enderecoDeEntrega;
+
+    @OneToMany(mappedBy = "id.pedido")
+    private Set<ItemPedido> itens = new HashSet<>();
 
     public Pedido() {
     }
 
-    public Pedido(Integer id, Date instante) {
+    public Pedido(Integer id, Date instante, /*Pagamento pagamento,*/ Cliente cliente, Endereco enderecoDeEntrega) {
         this.id = id;
         this.instante = instante;
+        //this.pagamento = pagamento;
+        this.cliente = cliente;
+        this.enderecoDeEntrega = enderecoDeEntrega;
+    }
+
+    public Double getValorTotal() {
+        double soma = 0.0;
+        for (ItemPedido ip : itens) {
+            soma = soma + ip.getSubTotal();
+        }
+        return soma;
     }
 
     public Pagamento getPagamento() {
@@ -75,6 +92,14 @@ public class Pedido implements Serializable {
         this.instante = instante;
     }
 
+    public Set<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public void setItens(Set<ItemPedido> itens) {
+        this.itens = itens;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,5 +111,27 @@ public class Pedido implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        final StringBuilder sb = new StringBuilder("Pedido{");
+        sb.append("Pedido número: ");
+        sb.append(getId());
+        sb.append(", Instante: ");
+        sb.append(sdf.format(getInstante()));
+        sb.append(", Cliente: ");
+        sb.append(getCliente().getNome());
+        sb.append(", Situação de pagamento");
+        sb.append(getPagamento().getEstado().getDescricao());
+        sb.append("\nDetalhes:\n");
+        for (ItemPedido ip : getItens()) {
+            sb.append(ip.toString());
+        }
+        sb.append("Valor total: ");
+        sb.append(nf.format(getValorTotal()));
+        return sb.toString();
     }
 }
