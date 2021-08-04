@@ -1,10 +1,14 @@
 package br.com.minhaloja.services;
 
+import br.com.minhaloja.domain.AjaxResponseBody;
 import br.com.minhaloja.domain.Categoria;
 import br.com.minhaloja.repositories.CategoriaRepository;
 import br.com.minhaloja.services.exceptions.DataIntegrityException;
 import br.com.minhaloja.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,5 +49,10 @@ public class CategoriaService {
         } catch (DataIntegrityException e) {
             throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
         }
+    }
+
+    public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        return categoriaRepository.findAll(pageRequest);
     }
 }
