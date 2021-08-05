@@ -37,4 +37,8 @@ public class ProdutoService {
         List<Categoria> categorias = categoriaRepository.findAllById(ids);
         return produtoRepository.search(nome, categorias, pageRequest);
     }
+
+    public List<Produto> findAll() {
+        return produtoRepository.findAll();
+    }
 }
