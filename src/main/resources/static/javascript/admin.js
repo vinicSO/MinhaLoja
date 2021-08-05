@@ -1,24 +1,52 @@
 let adminAbas = ["adminHome","adminDashboard", "adminOrders", "adminProdutos", "adminCategorias", "adminCustomers"]
 
+let abaAtual = adminAbas[0]
+
+let ConteudoMain = "#content"
+
 $(document).ready( function() {
     $('#adminCategorias').click(function() {
         getCategorias()
     })
+    $('#adminProdutos').click(function () {
+        getProdutos()
+    })
 })
+
+function limparContent() {
+    $(ConteudoMain).empty()
+    //$(ConteudoMain).removeClass()
+}
 
 function getCategorias() {
     let url = "/categorias/list"
     $.ajax({method: "GET", url})
         .done(function(response) {
-            
+            limparContent()
             listarCategorias(response.result)
-            alterarAbaAtiva('adminCategorias')
+            alterarAbaAtiva(adminAbas[4])
         })
         .fail(function() {
             alert("Erro na requisicao")
         })
         .always(function() {
-            alert("Requisicao feita")
+            console.log("Requisicao feita")
+        })
+}
+
+function getProdutos() {
+    let url = "/produtos/list"
+    $.ajax({method: "GET", url})
+        .done(function(response) {
+            limparContent()
+            listarProdutos(response.result)
+            alterarAbaAtiva(adminAbas[3])
+        })
+        .fail(function() {
+            alert("Erro na requisicao")
+        })
+        .always(function() {
+            console.log("Requisicao feita")
         })
 }
 
@@ -27,26 +55,25 @@ function alterarAbaAtiva(id) {
         document.getElementById(element).classList.remove('active')
     })
     document.getElementById(id).classList.add('active')
+    abaAtual = id
 }
 
 function listarCategorias(list) {
-    $('#content').toggleClass(`album py-5 bg-light`)
-    $('#content').append(`<div id='conteudoCategoria' class='container'></div>`)
-    $('#conteudoCategoria').append(
-        `<nav class='nav-options navbar navbar-expand-lg navbar-light bg-light'>
-            <a class="m-nav-link" href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                </svg>
-            </a>
-        </nav>`
+    //$(ConteudoMain).toggleClass(`album py-5 bg-light`)
+    $(ConteudoMain).append(
+        `<div id='conteudoCategoria' class='container'>
+            <nav class='nav-options navbar navbar-expand-lg navbar-light bg-light'>
+                <a class="m-nav-link" href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                </a>
+            </nav>
+            <ul id='listCategoria' class='list-group'></ul>
+        </div>`
     )
-    $('#conteudoCategoria').append(`<ul id='listCategoria' class='list-group'></ul>`)
-
-    let aux = 0;
 
     list.forEach(element => {
-        aux = aux + 1
         $('#listCategoria').append(
             `<li class='list-group-item d-flex justify-content-between align-items-center'>
                 <div>
@@ -69,4 +96,40 @@ function listarCategorias(list) {
             </li>`
         )
     });
+}
+
+function listarProdutos(list) {
+    //$(ConteudoMain).toggleClass(`album py-5 bg-light`)
+    $(ConteudoMain).append(
+        `<div class="container">
+            <div id='listProdutos' class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            </div>
+        </div>`
+    )
+
+    list.forEach(element => {
+        $('#listProdutos').append(
+            ` <div class="col">
+                <div class="card shadow-sm">
+                    <figure>
+                        <svg class="produto bd-placeholder-img card-img-top" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <title>Placeholder</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+                            <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+                        </svg>
+                        <div class="card-body">
+                            <p class="card-text">${element.nome}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </div>
+                                <small class="text-muted">9 mins</small>
+                            </div>
+                        </div>
+                    </figure>
+                </div>
+            </div>`
+        )
+    })
 }
