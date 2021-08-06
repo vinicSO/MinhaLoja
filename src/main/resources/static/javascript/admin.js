@@ -4,13 +4,31 @@ let abaAtual = adminAbas[0]
 
 let ConteudoMain = "#content"
 
+let popupDelete = document.getElementById(`popupDelete`)
+let button
+
 $(document).ready( function() {
-    $('#adminCategorias').click(function() {
+    $(`#adminCategorias`).click(function() {
         getCategorias()
     })
-    $('#adminProdutos').click(function () {
+    $(`#adminProdutos`).click(function () {
         getProdutos()
     })
+    $(`#buttonConfirmDelete`).click(function () {
+        let id = document.getElementById(`buttonConfirmDelete`).getAttribute(`objId`)
+
+        deleteCategoria(id)
+    })
+})
+
+popupDelete.addEventListener(`show.bs.modal`, function (event) {
+    button = event.relatedTarget
+
+    let obj_id = button.getAttribute(`objId`)
+    let obj_nome = button.getAttribute(`objNome`)
+    let obj_tipo = button.getAttribute(`objTipo`)
+
+    document.getElementById(`buttonConfirmDelete`).setAttribute(`objId`, obj_id)
 })
 
 function limparContent() {
@@ -37,16 +55,39 @@ function getCategorias() {
 function getProdutos() {
     let url = "/produtos/list"
     $.ajax({method: "GET", url})
-        .done(function(response) {
+        .done(function (response) {
             limparContent()
             listarProdutos(response.result)
             alterarAbaAtiva(adminAbas[3])
         })
-        .fail(function() {
+        .fail(function () {
             alert("Erro na requisicao")
         })
-        .always(function() {
+        .always(function () {
             console.log("Requisicao feita")
+        })
+}
+
+function deleteCategoria(id) {
+    let url = `/categorias/${id}`
+    $.ajax({
+        type: "DELETE",
+        url: url
+    })
+        .done(function (response) {
+            let categoria = document.getElementById(`lineCategoria-${id}`)
+            if (categoria.parentNode) {
+               categoria.parentNode.removeChild(categoria)
+            }
+
+            console.log("Deletado")
+            $(`#popupDelete`).modal('dispose')
+        })
+        .fail(function (response) {
+            console.log("Ocorreu um erro")
+        })
+        .always(function (response) {
+            console.log("Requisicao DELETE feita")
         })
 }
 
@@ -75,7 +116,7 @@ function listarCategorias(list) {
 
     list.forEach(element => {
         $('#listCategoria').append(
-            `<li class='list-group-item d-flex justify-content-between align-items-center'>
+            `<li id='lineCategoria-${element.id}' class='list-group-item d-flex justify-content-between align-items-center'>
                 <div>
                     <span>${element.nome}</span>
                     <span class="badge bg-primary rounded-pill">${element.quantidadeProdutosRelacionados}</span>
@@ -87,7 +128,7 @@ function listarCategorias(list) {
                             <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001z"/>
                         </svg>
                     </button>
-                    <button class="badge bg-danger" type="button">
+                    <button class="badge bg-danger" type="button" data-bs-target="#popupDelete" data-bs-toggle="modal" objId="${element.id}" objNome="${element.nome}" objTipo="Categoria">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                         </svg>

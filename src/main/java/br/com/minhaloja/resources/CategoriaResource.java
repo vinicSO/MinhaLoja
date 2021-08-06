@@ -40,7 +40,7 @@ public class CategoriaResource {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@RequestBody @Valid CategoriaDTO objDto) {
+    public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto) {
         Categoria obj = categoriaService.fromDTO(objDto);
         obj = categoriaService.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -48,13 +48,11 @@ public class CategoriaResource {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<AjaxResponseBody> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id) {
-        AjaxResponseBody<Categoria> result = new AjaxResponseBody<Categoria>();
+    public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id) {
         Categoria obj = categoriaService.fromDTO(objDto);
         obj.setId(id);
         obj = categoriaService.update(obj);
-        result.setObj(obj);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -64,13 +62,15 @@ public class CategoriaResource {
     }
 
     @RequestMapping(value="/page", method=RequestMethod.GET)
-    public ResponseEntity<Page<CategoriaDTO>> findPage(
+    public ResponseEntity<AjaxResponseBody> findPage(
             @RequestParam(value="page", defaultValue="0") Integer page,
             @RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage,
             @RequestParam(value="orderBy", defaultValue="nome") String orderBy,
             @RequestParam(value="direction", defaultValue="ASC") String direction) {
+        AjaxResponseBody<Page<CategoriaDTO>> result = new AjaxResponseBody<>();
         Page<Categoria> list = categoriaService.findPage(page, linesPerPage, orderBy, direction);
         Page<CategoriaDTO> listDto = list.map(obj -> new CategoriaDTO(obj));
-        return ResponseEntity.ok().body(listDto);
+        result.setObj(listDto);
+        return ResponseEntity.ok().body(result);
     }
 }
