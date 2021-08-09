@@ -29,6 +29,29 @@ $(document).ready( function() {
             }
         }
     })
+    $(document).on(`click`, `.buttonUpdate`, function (event) {
+        let button = event.currentTarget
+
+        let obj_id = button.getAttribute(`objId`)
+        let obj_nome = button.getAttribute(`objNome`)
+        let obj_tipo = button.getAttribute(`objTipo`)
+
+        let obj_content = document.getElementById(`contentLineCategoria-${obj_id}`)
+        let obj_input = document.getElementById(`inputLineCategoria-${obj_id}`)
+
+        obj_content.hidden = true
+        obj_input.hidden = false
+        obj_input.focus()
+
+        $(obj_input).focusout(function () {
+            if($(obj_input).val() == "") {
+                obj_content.hidden = false
+                obj_input.hidden = true
+            } else {
+                updateCategoria(obj_id, $(obj_input).val(), obj_input, obj_content)
+            }
+        })
+    })
     $(`#buttonConfirmDelete`).click(function () {
         let id = document.getElementById(`buttonConfirmDelete`).getAttribute(`objId`)
         deleteCategoria(id)
@@ -98,6 +121,32 @@ function deleteCategoria(id) {
         })
 }
 
+function updateCategoria(id, newName, input_line, content_line) {
+    let url = `/categorias/${id}`
+    let categoria = {
+        nome: newName
+    }
+    $.ajax({
+        type: "PUT",
+        contentType : "application/json",
+        data: JSON.stringify(categoria),
+        dataType: `json`,
+        url: url
+    })
+        .done(function (response) {
+            content_line.children[0].innerHTML = newName
+            input_line.hidden = true
+            content_line.hidden = false
+        })
+        .fail(function (response) {
+            alert("Ocorreu um erro")
+            input_line.hidden = true
+            content_line.hidden = false
+        })
+        .always(function (response) {
+        })
+}
+
 function alterarAbaAtiva(id) {
     adminAbas.forEach(element => {
         document.getElementById(element).classList.remove('active')
@@ -124,13 +173,14 @@ function listarCategorias(list) {
     list.forEach(element => {
         $('#listCategoria').append(
             `<li id='lineCategoria-${element.id}' class='list-group-item d-flex justify-content-between align-items-center'>
-                <div>
+                <div id='contentLineCategoria-${element.id}'>
                     <span>${element.nome}</span>
                     <span class="badge bg-primary rounded-pill">${element.quantidadeProdutosRelacionados}</span>
                 </div>
+                <input id='inputLineCategoria-${element.id}' hidden>
 
                 <span>
-                    <button class="badge bg-warning" type="button">
+                    <button class="buttonUpdate badge bg-warning" type="button" objId="${element.id}" objNome="${element.nome}" objTipo="Categoria">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
                             <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001z"/>
                         </svg>
