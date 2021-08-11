@@ -6,10 +6,10 @@ let ConteudoMain = "#content"
 
 $(document).ready( function() {
     $(`#adminCategorias`).click(function() {
-        getCategorias()
+        findAllCategorias()
     })
     $(`#adminProdutos`).click(function () {
-        getProdutos()
+        findAllProdutos()
     })
     $(document).on(`click`, `.buttonDelete`, function (event) {
         let button = event.currentTarget
@@ -56,6 +56,12 @@ $(document).ready( function() {
         let id = document.getElementById(`buttonConfirmDelete`).getAttribute(`objId`)
         deleteCategoria(id)
     })
+    $(`#formNewCategoria`).submit(function (event) {
+        event.preventDefault()
+        let name = $(`#inputNameNewCategoria`).val()
+
+        insertCategoria(name)
+    })
 })
 
 function popupDelete(obj_id, obj_nome, obj_tipo, obj_objetos_relacionados) {
@@ -68,7 +74,7 @@ function limparContent() {
     //$(ConteudoMain).removeClass()
 }
 
-function getCategorias() {
+function findAllCategorias() {
     let url = "/categorias/list"
     $.ajax({method: "GET", url})
         .done(function(response) {
@@ -83,7 +89,7 @@ function getCategorias() {
         })
 }
 
-function getProdutos() {
+function findAllProdutos() {
     let url = "/produtos/list"
     $.ajax({method: "GET", url})
         .done(function (response) {
@@ -147,6 +153,51 @@ function updateCategoria(id, newName, input_line, content_line) {
         })
 }
 
+function insertCategoria(name) {
+    let url = `/categorias`
+    let categoria = {
+        nome: name
+    }
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(categoria),
+        dataType: `json`,
+        cache: false,
+        timeout: 600000,
+        url: url,
+        success: function (response) {
+            let obj = response.obj
+
+            $(`#listCategoria`).append(
+                `<li id='lineCategoria-${obj.id}' class='list-group-item d-flex justify-content-between align-items-center'>
+                    <div id='contentLineCategoria-${obj.id}'>
+                        <span>${obj.nome}</span>
+                        <span class="badge bg-primary rounded-pill">${obj.quantidadeProdutosRelacionados}</span>
+                    </div>
+                    <input id='inputLineCategoria-${obj.id}' hidden>
+
+                    <span>
+                        <button class="buttonUpdate badge bg-warning" type="button" objId="${obj.id}" objNome="${obj.nome}" objTipo="Categoria">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001z"/>
+                            </svg>
+                        </button>
+                        <button class="buttonDelete badge bg-danger" type="button" objId="${obj.id}" objNome="${obj.nome}" objTipo="Categoria" objProdutosRelacionados="${obj.quantidadeProdutosRelacionados}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                            </svg>
+                        </button>
+                    </span>
+                </li>`
+            )
+        },
+        error: function (response) {
+            alert("Ocorreu um erro")
+        }
+    })
+}
+
 function alterarAbaAtiva(id) {
     adminAbas.forEach(element => {
         document.getElementById(element).classList.remove('active')
@@ -160,18 +211,18 @@ function listarCategorias(list) {
     $(ConteudoMain).append(
         `<div id='conteudoCategoria' class='container'>
             <nav class='nav-options navbar navbar-expand-lg navbar-light bg-light'>
-                <a class="m-nav-link" href="#">
+                <button id="buttonNewCategoria" class="badge bg-success" type="button" data-bs-target="#popupInsertCategoria" data-bs-toggle="modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                     </svg>
-                </a>
+                </button>
             </nav>
             <ul id='listCategoria' class='list-group'></ul>
         </div>`
     )
 
     list.forEach(element => {
-        $('#listCategoria').append(
+        $(`#listCategoria`).append(
             `<li id='lineCategoria-${element.id}' class='list-group-item d-flex justify-content-between align-items-center'>
                 <div id='contentLineCategoria-${element.id}'>
                     <span>${element.nome}</span>
@@ -210,7 +261,7 @@ function listarProdutos(list) {
             ` <div class="col">
                 <div class="card shadow-sm">
                     <figure>
-                        <svg class="produto bd-placeholder-img card-img-top" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <svg class="produto bd-placeholder-img card-img-top" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid slice" focusable="false">
                             <title>Placeholder</title>
                             <rect width="100%" height="100%" fill="#55595c"></rect>
                             <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>

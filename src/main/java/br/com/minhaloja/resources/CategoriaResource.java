@@ -24,9 +24,10 @@ public class CategoriaResource {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<AjaxResponseBody> find(@PathVariable Integer id) {
-        AjaxResponseBody<Categoria> result = new AjaxResponseBody<Categoria>();
+        AjaxResponseBody<CategoriaDTO> result = new AjaxResponseBody<CategoriaDTO>();
         Categoria obj = categoriaService.find(id);
-        result.setObj(obj);
+        CategoriaDTO objDto = new CategoriaDTO(obj);
+        result.setObj(objDto);
         return ResponseEntity.ok().body(result);
     }
 
@@ -40,11 +41,13 @@ public class CategoriaResource {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto) {
+    public ResponseEntity<AjaxResponseBody> insert(@Valid @RequestBody CategoriaDTO objDto) {
+        AjaxResponseBody<CategoriaDTO> result = new AjaxResponseBody<CategoriaDTO>();
         Categoria obj = categoriaService.fromDTO(objDto);
         obj = categoriaService.insert(obj);
+        result = find(obj.getId()).getBody();
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(result);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
