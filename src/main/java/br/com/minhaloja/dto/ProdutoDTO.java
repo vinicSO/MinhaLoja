@@ -10,6 +10,7 @@ public class ProdutoDTO implements Serializable {
     private Integer id;
     private String nome;
     private Double preco;
+    private String linkImagemS3;
 
     public ProdutoDTO() {
     }
@@ -18,6 +19,7 @@ public class ProdutoDTO implements Serializable {
         id = obj.getId();
         nome = obj.getNome();
         preco = obj.getPreco();
+        linkImagemS3 = obj.getLinkImagemS3();
     }
 
     public static long getSerialVersionUID() {
@@ -46,5 +48,13 @@ public class ProdutoDTO implements Serializable {
 
     public void setPreco(Double preco) {
         this.preco = preco;
+    }
+
+    public String getLinkImagemS3() {
+        return linkImagemS3;
+    }
+
+    public void setLinkImagemS3(String linkImagemS3) {
+        this.linkImagemS3 = linkImagemS3;
     }
 }

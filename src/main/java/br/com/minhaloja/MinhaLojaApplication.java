@@ -61,17 +61,17 @@ public class MinhaLojaApplication implements CommandLineRunner {
 
 		// Produtos
 
-		Produto p1 = new Produto(null, "Computador", 2000.00);
-		Produto p2 = new Produto(null, "Impressora", 800.00);
-		Produto p3 = new Produto(null, "Mouse", 80.00);
-		Produto p4 = new Produto(null, "Mesa de Escritório", 300.00);
-		Produto p5 = new Produto(null, "Toalha", 50.00);
-		Produto p6 = new Produto(null, "Colcha", 200.00);
-		Produto p7 = new Produto(null, "TV true color", 1200.00);
-		Produto p8 = new Produto(null, "Roçadeira", 800.00);
-		Produto p9 = new Produto(null, "Abajour", 100.00);
-		Produto p10 = new Produto(null, "Pendente", 180.00);
-		Produto p11 = new Produto(null, "Shampoo", 90.00);
+		Produto p1 = new Produto(null, "Computador", 2000.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p2 = new Produto(null, "Impressora", 800.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p3 = new Produto(null, "Mouse", 80.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p4 = new Produto(null, "Mesa de Escritório", 300.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p5 = new Produto(null, "Toalha", 50.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p6 = new Produto(null, "Colcha", 200.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p7 = new Produto(null, "TV true color", 1200.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p8 = new Produto(null, "Roçadeira", 800.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p9 = new Produto(null, "Abajour", 100.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p10 = new Produto(null, "Pendente", 180.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
+		Produto p11 = new Produto(null, "Shampoo", 90.00, "https://minhalojas3.s3.amazonaws.com/1628646042999-logo-jane.png");
 
 		// Relacionamento CATEGORIA_PRODUTO
 

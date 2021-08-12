@@ -15,6 +15,7 @@ public class Produto implements Serializable {
     private Integer id;
     private String nome;
     private Double preco;
+    private String linkImagemS3;
 
     @JsonIgnore
     @ManyToMany
@@ -27,10 +28,19 @@ public class Produto implements Serializable {
 
     public Produto() {}
 
-    public Produto(Integer id, String nome, Double preco) {
+    public Produto(Integer id, String nome, Double preco, String linkImagemS3) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
+        this.linkImagemS3 = linkImagemS3;
+    }
+
+    public String getLinkImagemS3() {
+        return linkImagemS3;
+    }
+
+    public void setLinkImagemS3(String linkImageS3) {
+        this.linkImagemS3 = linkImageS3;
     }
 
     public List<Categoria> getCategorias() {
