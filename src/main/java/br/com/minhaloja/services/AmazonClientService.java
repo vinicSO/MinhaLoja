@@ -1,5 +1,6 @@
 package br.com.minhaloja.services;
 
+import br.com.minhaloja.domain.Produto;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -8,6 +9,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,9 @@ import java.util.Date;
 
 @Service
 public class AmazonClientService {
+
+    @Autowired
+    private ProdutoService produtoService;
 
     private AmazonS3 amazonS3;
 
@@ -69,7 +74,7 @@ public class AmazonClientService {
         try {
             File file = convertMultiPartToFile(multipartFile);
             String fileName = generateFileName(multipartFile);
-            fileUrl =  url + "/" + bucketName + "/" + fileName;
+            fileUrl =  url + "/" + fileName;
             uploadFileTos3bucket(fileName, file);
             file.delete();
         } catch (Exception e) {
@@ -82,6 +87,15 @@ public class AmazonClientService {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
         return "Successfully deleted";
+    }
+
+    public String updateFile(MultipartFile multipartFile, Integer produtoId) {
+        String newUrlFile = uploadFile(multipartFile);
+        Produto produto = produtoService.find(produtoId);
+        deleteFileFromS3Bucket(produto.getLinkImagemS3());
+        produto.setLinkImagemS3(newUrlFile);
+        produtoService.update(produto);
+        return newUrlFile;
     }
 
     @PostConstruct

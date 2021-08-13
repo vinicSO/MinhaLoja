@@ -41,4 +41,18 @@ public class ProdutoService {
     public List<Produto> findAll() {
         return produtoRepository.findAll();
     }
+
+    public Produto update(Produto obj) {
+        Produto newObj = find(obj.getId());
+        updateData(newObj, obj);
+        return produtoRepository.save(newObj);
+    }
+
+    public void updateData(Produto newObj, Produto obj) {
+        newObj.setLinkImagemS3(obj.getLinkImagemS3());
+        newObj.setPreco(obj.getPreco());
+        newObj.setNome(obj.getNome());
+        newObj.setCategorias(obj.getCategorias());
+        newObj.setItens(obj.getItens());
+    }
 }
