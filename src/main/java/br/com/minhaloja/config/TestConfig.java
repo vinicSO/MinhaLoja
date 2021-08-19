@@ -1,6 +1,8 @@
 package br.com.minhaloja.config;
 
 import br.com.minhaloja.services.DBService;
+import br.com.minhaloja.services.EmailService;
+import br.com.minhaloja.services.MockEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,5 +22,10 @@ public class TestConfig {
         dbService.instantiateTesteDatabase();
 
         return true;
+    }
+
+    @Bean
+    public EmailService emailService() {
+        return new MockEmailService();
     }
 }
