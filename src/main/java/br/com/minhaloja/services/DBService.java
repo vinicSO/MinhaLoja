@@ -2,6 +2,7 @@ package br.com.minhaloja.services;
 
 import br.com.minhaloja.domain.*;
 import br.com.minhaloja.enums.EstadoPagamento;
+import br.com.minhaloja.enums.Perfil;
 import br.com.minhaloja.enums.TipoCliente;
 import br.com.minhaloja.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,23 +125,28 @@ public class DBService {
 
         Cliente cli1 = new Cliente(null, "Maria Silva", "viniciusuptelecom@gmail.com", "12345678900", TipoCliente.PESSOAFISICA, bCryptPasswordEncoder.encode(""));
 
+        Cliente cli2 = new Cliente(null, "Ana Costa", "vinicius.santos.oliv3ira@gmail.com", "12345678901", TipoCliente.PESSOAFISICA, bCryptPasswordEncoder.encode(""));
+        cli2.addPerfil(Perfil.ADMIN);
         // Relacionamento CLIENTE_TELEFONE
 
         cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+        cli2.getTelefones().addAll(Arrays.asList("27366323", "93838355"));
 
         // Endereços
 
         Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
         Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+        Endereco e3 = new Endereco(null, "Avenida Liberdade", "801", "Casa branca", "Bairro Novo", "58275000", cli2, c2);
 
         // Relacionamento CLIENTE_ENDERECOS
 
         cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+        cli2.getEnderecos().addAll(Arrays.asList(e3));
 
         // Salvando no BD
 
-        clienteRepository.saveAll(Arrays.asList(cli1));
-        enderecoRepository.saveAll(Arrays.asList(e1, e2));
+        clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+        enderecoRepository.saveAll(Arrays.asList(e1, e2, e3));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
