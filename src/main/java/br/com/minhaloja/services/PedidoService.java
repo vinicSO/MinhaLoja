@@ -1,14 +1,17 @@
 package br.com.minhaloja.services;
 
-import br.com.minhaloja.domain.ItemPedido;
-import br.com.minhaloja.domain.PagamentoComBoleto;
-import br.com.minhaloja.domain.Pedido;
+import br.com.minhaloja.domain.*;
 import br.com.minhaloja.enums.EstadoPagamento;
 import br.com.minhaloja.repositories.ItemPedidoRepository;
 import br.com.minhaloja.repositories.PagamentoRepository;
 import br.com.minhaloja.repositories.PedidoRepository;
+import br.com.minhaloja.security.UserSS;
+import br.com.minhaloja.services.exceptions.AuthorizationException;
 import br.com.minhaloja.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +72,18 @@ public class PedidoService {
         itemPedidoRepository.saveAll(obj.getItens());
         emailService.sendOrderConfirmationHtmlEmail(obj);
         return obj;
+    }
+
+    public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+        UserSS user = UserService.authenticated();
+        if (user == null) {
+            throw new AuthorizationException("Acesso negado");
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+
+        Cliente cliente = clienteService.find(user.getId());
+
+        return pedidoRepository.findByCliente(cliente, pageRequest);
     }
 }
