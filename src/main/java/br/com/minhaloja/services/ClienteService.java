@@ -115,7 +115,7 @@ public class ClienteService {
         newObj.setEmail(obj.getEmail());
     }
 
-    public URI uploadProfilePicture(MultipartFile multipartFile) throws IOException, URISyntaxException {
+    public URI uploadProfilePicture(MultipartFile multipartFile) {
         return s3Service.uploadFile(multipartFile);
     }
 }

@@ -1,5 +1,6 @@
 package br.com.minhaloja.services;
 
+import br.com.minhaloja.services.exceptions.FileException;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -29,19 +30,28 @@ public class S3Service {
     @Value("${amazon.s3.bucket-name}")
     private String bucketName;
 
-    public URI uploadFile(MultipartFile multipartFile) throws IOException, URISyntaxException {
-        String fileName = multipartFile.getOriginalFilename();
-        InputStream is = multipartFile.getInputStream();
-        String contentType = multipartFile.getContentType();
-        return uploadFile(is, fileName, contentType);
+    public URI uploadFile(MultipartFile multipartFile) {
+        try {
+            String fileName = multipartFile.getOriginalFilename();
+            InputStream is = multipartFile.getInputStream();
+            String contentType = multipartFile.getContentType();
+            return uploadFile(is, fileName, contentType);
+        } catch (IOException e) {
+            throw new FileException("Erro de IO: " + e.getMessage());
+        }
+
     }
 
-    public URI uploadFile(InputStream is, String fileName, String contentType) throws URISyntaxException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(contentType);
-        LOG.info("Iniciando upload");
-        amazonS3.putObject(bucketName, fileName, is, metadata);
-        LOG.info("Upload finalizado");
-        return amazonS3.getUrl(bucketName, fileName).toURI();
+    public URI uploadFile(InputStream is, String fileName, String contentType) {
+        try {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(contentType);
+            LOG.info("Iniciando upload");
+            amazonS3.putObject(bucketName, fileName, is, metadata);
+            LOG.info("Upload finalizado");
+            return amazonS3.getUrl(bucketName, fileName).toURI();
+        } catch (URISyntaxException e) {
+            throw new FileException("Erro ao converter URL para URI");
+        }
     }
 }
