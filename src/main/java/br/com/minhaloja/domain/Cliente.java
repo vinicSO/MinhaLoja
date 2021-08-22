@@ -42,8 +42,6 @@ public class Cliente implements Serializable {
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos = new ArrayList<>();
 
-    private String linkImagemS3;
-
     public Cliente() {
         addPerfil(Perfil.CLIENTE);
     }
@@ -136,14 +134,6 @@ public class Cliente implements Serializable {
 
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
-    }
-
-    public String getLinkImagemS3() {
-        return linkImagemS3;
-    }
-
-    public void setLinkImagemS3(String linkImagemS3) {
-        this.linkImagemS3 = linkImagemS3;
     }
 
     @Override
