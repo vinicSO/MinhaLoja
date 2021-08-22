@@ -5,9 +5,12 @@ import br.com.minhaloja.domain.Cliente;
 import br.com.minhaloja.domain.Endereco;
 import br.com.minhaloja.dto.ClienteDTO;
 import br.com.minhaloja.dto.ClienteNewDTO;
+import br.com.minhaloja.enums.Perfil;
 import br.com.minhaloja.enums.TipoCliente;
 import br.com.minhaloja.repositories.ClienteRepository;
 import br.com.minhaloja.repositories.EnderecoRepository;
+import br.com.minhaloja.security.UserSS;
+import br.com.minhaloja.services.exceptions.AuthorizationException;
 import br.com.minhaloja.services.exceptions.DataIntegrityException;
 import br.com.minhaloja.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,12 @@ public class ClienteService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Cliente find(Integer id) {
+
+        UserSS user = UserService.authenticated();
+        if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+            throw new AuthorizationException("Acesso Negado");
+        }
+
         Optional<Cliente> obj = clienteRepository.findById(id);
 
         return obj.orElseThrow(() -> new ObjectNotFoundException(
